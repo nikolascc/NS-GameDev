@@ -24,8 +24,8 @@ def handle_keys():
 	# This function handles all user input
 	key = pygame.key.get_pressed()
 
-def main_menu():
-	# main menu function
+def main():
+	# main function
 	
 	# fill background
 	background = pygame.Surface(gameDisplay.get_size())
@@ -42,4 +42,4 @@ def main_menu():
 			handle_keys()
 
 # call functions here
-main_menu()
+main()
