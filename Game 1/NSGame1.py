@@ -94,6 +94,7 @@ def main():
 	background = pygame.Surface(gameDisplay.get_size())
 	background = background.convert()
 	background.fill(white)
+	#line = pygame.draw.line(gameDisplay, black, (0, SCREEN_WIDTH/2), (SCREEN_HEIGHT, SCREEN_WIDTH/2), 1)
 	
 	##### GAME LOOP #####
 	while 1:
@@ -107,6 +108,7 @@ def main():
 					energyBlock1.changePos()
 			pygame.display.update()
 			gameDisplay.blit(background_img,(0,0))
+			#pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.5), 2)
 			handle_keys()
 			clickerScore.render()
 			energyText.render()
