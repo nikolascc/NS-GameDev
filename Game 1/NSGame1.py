@@ -4,8 +4,8 @@ import random
 
 # initialize screen & colours
 pygame.init()
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 500
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
@@ -59,8 +59,8 @@ class Energy_Block:
 		gameDisplay.blit(self.image,(self.x, self.y))
 	
 	def changePos(self):
-		self.x = random.randrange(260, SCREEN_WIDTH-40)
-		self.y = random.randrange(10, 270)
+		self.x = random.randrange((SCREEN_WIDTH/2)+10, SCREEN_WIDTH-40)
+		self.y = random.randrange(10, (SCREEN_HEIGHT/2)+20)
 
 	def position(self):
 		return self.x, self.y
@@ -82,10 +82,10 @@ def main():
 	# main function
 	
 	# initializations
-	clickerScore = Score(320, 310)
-	energyText = Text('Energy: ', 250, 310)
-	blockx = random.randrange(260, SCREEN_WIDTH-30)
-	blocky = random.randrange(10, 270)
+	clickerScore = Score((SCREEN_WIDTH/2)+70, SCREEN_HEIGHT/1.65)
+	energyText = Text('Energy: ', (SCREEN_WIDTH/2), (SCREEN_HEIGHT/1.65))
+	blockx = random.randrange((SCREEN_WIDTH/2)+10, SCREEN_WIDTH-30)
+	blocky = random.randrange(10, (SCREEN_HEIGHT/2)+20)
 	energyBlock1 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock2 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock3 = Energy_Block(otherbit,blockx,blocky)
@@ -107,8 +107,9 @@ def main():
 					clickerScore.change(3)
 					energyBlock1.changePos()
 			pygame.display.update()
-			gameDisplay.blit(background_img,(0,0))
-			#pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.5), 2)
+			gameDisplay.blit(background,(0,0))
+			pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 2)
+			pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 2)
 			handle_keys()
 			clickerScore.render()
 			energyText.render()
