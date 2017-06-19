@@ -4,12 +4,13 @@ import random
 
 # initialize screen & colours
 pygame.init()
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 500
 white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
 green = (0,200,0)
+blue = (0,0,255)
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('NS Game 1')
 
@@ -63,7 +64,7 @@ class Button:
 		self.width = width
 		self.height = height
 
-class AttackButton(Button):
+class ActionButton(Button):
 	# this class inherits from the Button class and creates the Attack Button object
 	def __init__(self, color, text, left, top, width, height):
 		Button.__init__(self, color, text, left, top, width, height)
@@ -125,13 +126,10 @@ class Energy_Block:
 def handle_clicks():
 	print('clicked!')
 	clickx, clicky = pygame.mouse.get_pos()
-	#if clickx >= energyBlock1.position()[0] and clickx <= (energyBlock1.position()[0]+30) and clicky >= energyBlock1.position()[1] and clicky <= (energyBlock1.position()[1]+30):
-	#	print('handled click!')
 	return clickx, clicky
 
 def handle_keys():
 	# this function handles all keyboard input
-	
 	key = pygame.key.get_pressed()
 
 def main():
@@ -150,8 +148,10 @@ def main():
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+70, (SCREEN_HEIGHT/1.65))
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
-	attackButton = AttackButton(black, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	attackButton = ActionButton(black, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	shieldButton = ActionButton(blue, "SHIELDS!", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
 	time = 0
+	second = 0
 	
 	# fill background
 	background = pygame.Surface(gameDisplay.get_size())
@@ -176,24 +176,37 @@ def main():
 						clickerScore.modify(player.energy)
 						enemy.changeHull(-10)
 						enemyHullPoints.modify(enemy.hull)
+						print("Attacked enemy!")
 					else:
 						print("Not enough energy!")
-			pygame.display.update()
-			gameDisplay.blit(background,(0,0))
-			pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 2)
-			pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 2)
-			player.render()
-			enemy.render()
-			attackButton.render()
-			handle_keys()
-			clickerScore.render()
-			healthScore.render()
-			enemyHullPoints.render()
-			energyText.render()
-			healthText.render()
-			energyBlock1.render()
-			time += 1
-			clock.tick(60)
+				elif shieldButton.buttonRect.collidepoint(click):
+					if player.energy >= 10:
+						player.changeEnergy(-10)
+						clickerScore.modify(player.energy)
+						print("Shields raised!")
+					else:
+						print("Not enough energy!")
+
+		pygame.display.update()
+		gameDisplay.blit(background,(0,0))
+		pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 2)
+		pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 2)
+		player.render()
+		enemy.render()
+		attackButton.render()
+		shieldButton.render()
+		handle_keys()
+		clickerScore.render()
+		healthScore.render()
+		enemyHullPoints.render()
+		energyText.render()
+		healthText.render()
+		energyBlock1.render()
+		time += 1
+		if time%60 == 0:
+			second += 1
+			print(second)
+		clock.tick(60)
 
 # call functions here
 main()
