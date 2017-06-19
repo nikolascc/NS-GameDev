@@ -59,6 +59,15 @@ class Enemy:
 	def changeHull(self, num):
 		self.hull += num
 
+class TriangleEnemy:
+	def __init__(self, a):
+		self.a = a
+		self.pointList = [(50,((3*(self.a))*math.sqrt(3))), (3*(self.a),50), (-3*(self.a),50)]
+		#self.pointList = [(0,50), (30,0), (-30,0)]
+
+	def render(self):
+		pygame.draw.polygon(gameDisplay, red, self.pointList, 5)
+
 class Button:
 	# this class creates button objects
 	def __init__(self, color, text, left, top, width, height):
@@ -150,6 +159,7 @@ def main():
 	energyBlock2 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock3 = Energy_Block(otherbit,blockx,blocky)
 	enemy = Enemy(100)
+	testEnemy = TriangleEnemy(50)
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+70, (SCREEN_HEIGHT/1.65))
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
@@ -157,7 +167,7 @@ def main():
 	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
 	time = 0
 	second = 0
-	shieldSecond = 0
+	shieldTime = 0
 	
 	# fill background
 	background = pygame.Surface(gameDisplay.get_size())
@@ -190,7 +200,7 @@ def main():
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
 						player.color = cyan
-						shieldSecond = second
+						shieldTime = time
 						print("Shields raised!")
 					else:
 						print("Not enough energy!")
@@ -201,6 +211,7 @@ def main():
 		pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 2)
 		player.render()
 		enemy.render()
+		testEnemy.render()
 		attackButton.render()
 		shieldButton.render()
 		handle_keys()
@@ -210,13 +221,16 @@ def main():
 		energyText.render()
 		healthText.render()
 		energyBlock1.render()
-		if second == shieldSecond + 3:
+		
+		# returns the player's shields to normal after 3 seconds
+		if time == shieldTime + 180:
 			player.color = black
+			
 		time += 1
 		if time%60 == 0:
 			second += 1
 			print(second)
-			time = 0
+			#time = 0
 		clock.tick(60)
 
 # call functions here
