@@ -1,16 +1,20 @@
 import pygame
 import time
 import random
+import math
 
 # initialize screen & colours
 pygame.init()
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 500
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 white = (255,255,255)
 black = (0,0,0)
 red = (255,0,0)
 green = (0,200,0)
 blue = (0,0,255)
+cyan = (0, 255, 255)
+firebrick = (178, 38, 34)
+orange_red = (255, 69, 0)
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('NS Game 1')
 
@@ -27,9 +31,10 @@ class Player:
 	def __init__(self, hull, energy):
 		self.hull = hull
 		self.energy = energy
+		self.color = black
 
 	def render(self):
-		pygame.draw.circle(gameDisplay, black, (int((SCREEN_WIDTH*0.125)),int((SCREEN_HEIGHT*0.35))), 50, 2)	
+		pygame.draw.circle(gameDisplay, self.color, (int((SCREEN_WIDTH*0.125)),int((SCREEN_HEIGHT*0.35))), 50, 2)	
 
 	def attack(self):
 		print("Player Attacked!")
@@ -134,7 +139,7 @@ def handle_keys():
 
 def main():
 	# main function
-	
+
 	# initializations
 	clickerScore = Score(0, (SCREEN_WIDTH/1.5)+70, SCREEN_HEIGHT/1.65)
 	energyText = Text('Energy: ', green, (SCREEN_WIDTH/1.5), (SCREEN_HEIGHT/1.65))
@@ -148,8 +153,8 @@ def main():
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+70, (SCREEN_HEIGHT/1.65))
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
-	attackButton = ActionButton(black, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
-	shieldButton = ActionButton(blue, "SHIELDS!", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	attackButton = ActionButton(orange_red, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
 	time = 0
 	second = 0
 	
@@ -183,6 +188,7 @@ def main():
 					if player.energy >= 10:
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
+						player.color = cyan
 						print("Shields raised!")
 					else:
 						print("Not enough energy!")
@@ -206,6 +212,7 @@ def main():
 		if time%60 == 0:
 			second += 1
 			print(second)
+			time = 0
 		clock.tick(60)
 
 # call functions here
