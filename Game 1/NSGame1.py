@@ -53,7 +53,7 @@ class Enemy:
 		#self.pointList = [(0,3()), (,), (,)]
 
 	def render(self):
-		#pygame.draw.polygon(gamedisplay, red, )
+		#pygame.draw.polygon(gameDisplay, red, )
 		pygame.draw.rect(gameDisplay, red, self.enemyRect, 5)
 
 	def changeHull(self, num):
@@ -157,6 +157,7 @@ def main():
 	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
 	time = 0
 	second = 0
+	shieldSecond = 0
 	
 	# fill background
 	background = pygame.Surface(gameDisplay.get_size())
@@ -189,6 +190,7 @@ def main():
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
 						player.color = cyan
+						shieldSecond = second
 						print("Shields raised!")
 					else:
 						print("Not enough energy!")
@@ -208,6 +210,8 @@ def main():
 		energyText.render()
 		healthText.render()
 		energyBlock1.render()
+		if second == shieldSecond + 3:
+			player.color = black
 		time += 1
 		if time%60 == 0:
 			second += 1
