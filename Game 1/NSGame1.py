@@ -149,6 +149,7 @@ def main():
 	enemy = Enemy(100)
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+70, (SCREEN_HEIGHT/1.65))
+	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
 	attackButton = AttackButton(black, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
 	time = 0
 	
@@ -173,6 +174,10 @@ def main():
 					if player.energy >= 10:
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
+						enemy.changeHull(-10)
+						enemyHullPoints.modify(enemy.hull)
+					else:
+						print("Not enough energy!")
 			pygame.display.update()
 			gameDisplay.blit(background,(0,0))
 			pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 2)
@@ -183,6 +188,7 @@ def main():
 			handle_keys()
 			clickerScore.render()
 			healthScore.render()
+			enemyHullPoints.render()
 			energyText.render()
 			healthText.render()
 			energyBlock1.render()
