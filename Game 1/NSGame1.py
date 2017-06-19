@@ -23,29 +23,21 @@ otherbit = pygame.image.load('otherbit.png')
 
 class Player:
 	# this class creates the player object
-	def __init__(self, health, shields, energy, attack):
-		self.health = health
-		self.shields = shields
+	def __init__(self, hull, energy):
+		self.hull = hull
 		self.energy = energy
-		self.attack = attack
-	
+
 	def render(self):
 		pygame.draw.circle(gameDisplay, black, (int((SCREEN_WIDTH*0.125)),int((SCREEN_HEIGHT*0.35))), 50, 2)	
 
 	def attack(self):
 		print("Player Attacked!")
 	
-	def changeHealth(self, num):
-		self.health += num
-	
-	def changeShields(self, num):
-		self.shields += num
+	def changeHull(self, num):
+		self.hull += num
 	
 	def changeEnergy(self, num):
 		self.energy += num
-	
-	def changeAttack(self, num):
-		self.attack += num
 
 class Button:
 	# this class creates button objects
@@ -140,27 +132,31 @@ def main():
 	energyBlock1 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock2 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock3 = Energy_Block(otherbit,blockx,blocky)
-	player = Player(100, 100, 0, 1)
-	attackButton = AttackButton(black, "ATTACK", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	player = Player(100, 0)
+	attackButton = AttackButton(black, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	time = 0
 	
 	# fill background
 	background = pygame.Surface(gameDisplay.get_size())
 	background = background.convert()
 	background.fill(white)
-	#line = pygame.draw.line(gameDisplay, black, (0, SCREEN_WIDTH/2), (SCREEN_HEIGHT, SCREEN_WIDTH/2), 1)
 	
 	##### GAME LOOP #####
 	while 1:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
+				pygame.quit()
 				quit()
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				click = handle_clicks()
 				if click[0] >= energyBlock1.position()[0] and click[0] <= (energyBlock1.position()[0]+30) and click[1] >= energyBlock1.position()[1] and click[1] <= (energyBlock1.position()[1]+30):
-					#clickerScore.change(3)
 					player.changeEnergy(3)
 					clickerScore.modify(player.energy)
 					energyBlock1.changePos()
+					print(attackButton.buttonRect)
+					print(click)
+				elif attackButton.buttonRect.collidepoint(click):
+					print("Attacked!")
 			pygame.display.update()
 			gameDisplay.blit(background,(0,0))
 			pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 2)
@@ -171,6 +167,9 @@ def main():
 			clickerScore.render()
 			energyText.render()
 			energyBlock1.render()
+			time += 1
+			#print(time)
+			clock.tick(60)
 
 # call functions here
 main()
