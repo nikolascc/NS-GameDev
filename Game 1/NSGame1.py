@@ -111,15 +111,21 @@ class Score:
 
 class Text:
 	# this class creates text objects
-	def __init__(self, content, color, x, y):
+	def __init__(self, content, color, x, y, background=False):
 		self.content = content
 		self.color = color
+		self.background = background
+		#self.background_color = background_color
 		self.x = x
 		self.y = y
 		font = pygame.font.SysFont(None,25)
 		self.text = font.render(self.content, True, self.color)
+		if self.background == True:
+			self.textRect = pygame.Rect(self.x-3, self.y-3, 71, 23)
 	
 	def render(self):
+		if self.background == True:
+			pygame.draw.rect(gameDisplay, white, self.textRect, 0)
 		gameDisplay.blit(self.text,(self.x,self.y))
 
 class Energy_Block:
@@ -153,8 +159,8 @@ def main():
 
 	# initializations
 	clickerScore = Score(0, (SCREEN_WIDTH/1.5)+70, SCREEN_HEIGHT/1.65)
-	energyText = Text('Energy: ', green, (SCREEN_WIDTH/1.5), (SCREEN_HEIGHT/1.65))
-	healthText = Text('Health: ', green, (SCREEN_WIDTH/2), (SCREEN_HEIGHT/1.65))
+	energyText = Text('Energy: ', green, (SCREEN_WIDTH/1.5), (SCREEN_HEIGHT/1.65), True)
+	healthText = Text('Health: ', green, (SCREEN_WIDTH/2), (SCREEN_HEIGHT/1.65), True)
 	blockx = random.randrange((SCREEN_WIDTH/2)+10, SCREEN_WIDTH-30)
 	blocky = random.randrange(10, (SCREEN_HEIGHT/2)+20)
 	energyBlock1 = Energy_Block(otherbit,blockx,blocky)
