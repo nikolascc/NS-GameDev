@@ -35,7 +35,7 @@ class Player:
 		self.color = black
 
 	def render(self):
-		pygame.draw.circle(gameDisplay, self.color, (int((SCREEN_WIDTH*0.125)),int((SCREEN_HEIGHT*0.35))), 50, 2)	
+		pygame.draw.circle(gameDisplay, self.color, (int((SCREEN_WIDTH*0.08)),int((SCREEN_HEIGHT*0.42))), 50, 5)
 
 	def attack(self):
 		print("Player Attacked!")
@@ -86,10 +86,14 @@ class ActionButton(Button):
 		Button.__init__(self, color, text, left, top, width, height)
 		self.buttonRect = pygame.Rect(self.left, self.top, self.width, self.height)
 		self.attackButtonText = Text(self.text, red, self.left+16, self.top+18)
-	
+		self.cooldown = False
+
 	def render(self):
 		pygame.draw.rect(gameDisplay, self.color, self.buttonRect, 0)
 		self.attackButtonText.render()
+
+	def changeCooldown(self, flag):
+		self.cooldown = flag
 
 class Score:
 	# this class creates score objects
@@ -104,16 +108,16 @@ class Score:
 				self.scoreRect = pygame.Rect(self.x-3, self.y-3, 35, 23)
 			else:
 				self.scoreRect = pygame.Rect(self.x-3, self.y-3, 23, 23)
-	
+
 	def render(self):
 		self.score = self.font.render(str(self.number), True, red)
 		if self.background == True:
 			pygame.draw.rect(gameDisplay, white, self.scoreRect, 0)
 		gameDisplay.blit(self.score,(self.x,self.y))
-		
+
 	def change(self, num):
 		self.number += num
-	
+
 	def modify(self, num):
 		self.number = num
 
@@ -174,7 +178,7 @@ def main():
 	energyBlock2 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock3 = Energy_Block(otherbit,blockx,blocky)
 	enemy = Enemy(100)
-	testEnemy = TriangleEnemy(50)
+	#testEnemy = TriangleEnemy(50)
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+65, (SCREEN_HEIGHT/1.65), True)
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
@@ -183,6 +187,7 @@ def main():
 	time = 0
 	second = 0
 	shieldTime = 0
+	
 	
 	# fill background
 	background = pygame.Surface(gameDisplay.get_size())
@@ -211,14 +216,20 @@ def main():
 					else:
 						print("Not enough energy!")
 				elif shieldButton.buttonRect.collidepoint(click):
-					if player.energy >= 10:
+					if player.energy >= 10 and shieldButton.cooldown == False:
+						shieldButton.changeCooldown(True)
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
 						player.color = cyan
 						shieldTime = time
 						print("Shields raised!")
+						if shieldButton.cooldown == True:
+							print("Cooldown is True!")
 					else:
-						print("Not enough energy!")
+						if shieldButton.cooldown == True:
+							print("Shields cooling down!")
+						else:
+							print("Not enough energy!")
 
 		pygame.display.update()
 		gameDisplay.blit(background,(0,0))
@@ -229,7 +240,7 @@ def main():
 		pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 10)
 		player.render()
 		enemy.render()
-		testEnemy.render()
+		#testEnemy.render()
 		attackButton.render()
 		shieldButton.render()
 		handle_keys()
@@ -243,6 +254,7 @@ def main():
 		# returns the player's shields to normal after 3 seconds
 		if time == shieldTime + 180:
 			player.color = black
+			shieldButton.cooldown = False
 			
 		time += 1
 		if time%60 == 0:
