@@ -25,6 +25,7 @@ clock.tick(60)
 # load images into the game
 background_img = pygame.image.load('firstscreen.png')
 otherbit = pygame.image.load('otherbit.png')
+metalmesh = pygame.image.load('metalmesh.png')
 
 class Player:
 	# this class creates the player object
@@ -72,6 +73,7 @@ class Button:
 	# this class creates button objects
 	def __init__(self, color, text, left, top, width, height):
 		self.color = color
+		#self.background_color = background_color
 		self.text = text
 		self.left = left
 		self.top = top
@@ -86,7 +88,7 @@ class ActionButton(Button):
 		self.attackButtonText = Text(self.text, red, self.left+16, self.top+18)
 	
 	def render(self):
-		pygame.draw.rect(gameDisplay, self.color, self.buttonRect, 5)
+		pygame.draw.rect(gameDisplay, self.color, self.buttonRect, 0)
 		self.attackButtonText.render()
 
 class Score:
@@ -207,8 +209,11 @@ def main():
 
 		pygame.display.update()
 		gameDisplay.blit(background,(0,0))
-		pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 2)
-		pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 2)
+		gameDisplay.blit(metalmesh,(0, SCREEN_HEIGHT/1.7))
+		gameDisplay.blit(metalmesh,(500, SCREEN_HEIGHT/1.7))
+		gameDisplay.blit(metalmesh,(1000, SCREEN_HEIGHT/1.7))
+		pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 10)
+		pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 10)
 		player.render()
 		enemy.render()
 		testEnemy.render()
