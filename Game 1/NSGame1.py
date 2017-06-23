@@ -93,14 +93,22 @@ class ActionButton(Button):
 
 class Score:
 	# this class creates score objects
-	def __init__(self, number, x, y):
+	def __init__(self, number, x, y, background=False):
 		self.number = number
 		self.x = x
 		self.y = y
 		self.font = pygame.font.SysFont(None, 25)
+		self.background = background
+		if self.background == True:
+			if self.number >= 100:
+				self.scoreRect = pygame.Rect(self.x-3, self.y-3, 35, 23)
+			else:
+				self.scoreRect = pygame.Rect(self.x-3, self.y-3, 23, 23)
 	
 	def render(self):
 		self.score = self.font.render(str(self.number), True, red)
+		if self.background == True:
+			pygame.draw.rect(gameDisplay, white, self.scoreRect, 0)
 		gameDisplay.blit(self.score,(self.x,self.y))
 		
 	def change(self, num):
@@ -114,12 +122,11 @@ class Text:
 	def __init__(self, content, color, x, y, background=False):
 		self.content = content
 		self.color = color
-		self.background = background
-		#self.background_color = background_color
 		self.x = x
 		self.y = y
 		font = pygame.font.SysFont(None,25)
 		self.text = font.render(self.content, True, self.color)
+		self.background = background
 		if self.background == True:
 			self.textRect = pygame.Rect(self.x-3, self.y-3, 71, 23)
 	
@@ -158,7 +165,7 @@ def main():
 	# main function
 
 	# initializations
-	clickerScore = Score(0, (SCREEN_WIDTH/1.5)+70, SCREEN_HEIGHT/1.65)
+	clickerScore = Score(0, (SCREEN_WIDTH/1.5)+70, SCREEN_HEIGHT/1.65, True)
 	energyText = Text('Energy: ', green, (SCREEN_WIDTH/1.5), (SCREEN_HEIGHT/1.65), True)
 	healthText = Text('Health: ', green, (SCREEN_WIDTH/2), (SCREEN_HEIGHT/1.65), True)
 	blockx = random.randrange((SCREEN_WIDTH/2)+10, SCREEN_WIDTH-30)
@@ -169,7 +176,7 @@ def main():
 	enemy = Enemy(100)
 	testEnemy = TriangleEnemy(50)
 	player = Player(100, 0)
-	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+70, (SCREEN_HEIGHT/1.65))
+	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+65, (SCREEN_HEIGHT/1.65), True)
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
 	attackButton = ActionButton(orange_red, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
 	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
