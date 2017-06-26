@@ -194,6 +194,23 @@ class Energy_Block:
 	def position(self):
 		return self.x, self.y
 
+class Particle_Effect:
+	# this class creates particle effects
+	def __init__(self, color, x, y, width, height):
+		self.color = color
+		self.x = x
+		self.y = y
+		self.width = width
+		self.height = height
+	
+	def render(self):
+		i = 0
+		while i < 50:
+			self.localx = random.randint(self.x, (self.width/2)+self.x)
+			self.localy = random.randint(self.y, (self.height/2)+self.y)
+			pygame.gfxdraw.pixel(gameDisplay, self.localx, self.localy, self.color)
+			i += 1
+
 def d20():
 	# This function simulates a twenty-sided dice
     r3 = 0
@@ -258,6 +275,8 @@ def main():
 	energyBlock1 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock2 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock3 = Energy_Block(otherbit,blockx,blocky)
+	particle1 = Particle_Effect(red, int((SCREEN_WIDTH*0.1)),int((SCREEN_HEIGHT*0.35)),50,50)
+	particle2 = Particle_Effect(red, int((SCREEN_WIDTH*0.35)),int((SCREEN_HEIGHT*0.2)),50,50)
 	enemy = Enemy(100)
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+65, (SCREEN_HEIGHT/1.65), True)
@@ -268,6 +287,10 @@ def main():
 	time = 0
 	second = 0
 	shieldTime = 0
+	playerHit = False
+	playerHitTime = 0
+	enemyHit = False
+	enemyHitTime = 0
 	
 	
 	# backgrounds
@@ -300,6 +323,8 @@ def main():
 				elif attackButton.buttonRect.collidepoint(click):
 					if player.energy >= 10:
 						playerShoot.play()
+						enemyHit = True
+						enemyHitTime = time
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
 						playerAttack = d6()+4
@@ -363,6 +388,18 @@ def main():
 		# removes cooldown on player's shields after 6 seconds
 		if time == shieldTime + 360:
 			shieldButton.cooldown = False
+		
+		# render player hit particle effect
+		if playerHit == True:
+			particle1.render()
+			if time == playerHitTime + 50:
+				playerHit = False
+		
+		# render enemy hit particle effect
+		if enemyHit == True:
+			particle2.render()
+			if time == enemyHitTime + 50:
+				enemyHit = False
 			
 		time += 1
 		if time%60 == 0:
@@ -376,6 +413,8 @@ def main():
 				else:
 					if enemyAttack > 0:
 						enemyShoot.play()
+						playerHit = True
+						playerHitTime = time
 						print("You were hit for {} damage!".format(enemyAttack))
 						player.changeHull(-enemyAttack)
 						healthScore.modify(player.hull)
