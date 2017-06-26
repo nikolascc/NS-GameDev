@@ -29,6 +29,20 @@ background_img = pygame.image.load('firstscreen.png')
 otherbit = pygame.image.load('otherbit.png')
 metalmesh = pygame.image.load('metalmesh.png')
 
+# mixer and sounds
+pygame.mixer.init()
+sfxChannel = pygame.mixer.Channel(2)
+playerShoot = pygame.mixer.Sound('Laser_Shoot.wav')
+enemyShoot = pygame.mixer.Sound('Enemy_Shoot.wav')
+energyGather = pygame.mixer.Sound('Energy.wav')
+shieldsUp = pygame.mixer.Sound('Shields_Up.wav')
+playerBlocked = pygame.mixer.Sound('Blocked.wav')
+playerShoot.set_volume(0.5)
+enemyShoot.set_volume(0.35)
+energyGather.set_volume(0.25)
+shieldsUp.set_volume(0.25)
+playerBlocked.set_volume(0.35)
+
 class Player:
 	# this class creates the player object
 	def __init__(self, hull, energy):
@@ -100,7 +114,7 @@ class ActionButton(Button):
 		Button.__init__(self, color, text, left, top, width, height)
 		self.buttonRect = pygame.Rect(self.left, self.top, self.width, self.height)
 		self.backgroundRect = pygame.Rect(self.left-3, self.top-3, self.width+6, self.height+6)
-		self.actionButtonText = Text(self.text, red, self.left+(self.width/2)-75, self.top+(self.height/2)-15, 50)
+		self.actionButtonText = Text(self.text, black, self.left+(self.width/2)-75, self.top+(self.height/2)-15, 50)
 		self.cooldown = False
 
 	def render(self):
@@ -275,12 +289,14 @@ def main():
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				click = handle_clicks()
 				if click[0] >= energyBlock1.position()[0] and click[0] <= (energyBlock1.position()[0]+30) and click[1] >= energyBlock1.position()[1] and click[1] <= (energyBlock1.position()[1]+30):
-					player.changeEnergy(3)
+					energyGather.play()
+					player.changeEnergy(d6())
 					clickerScore.modify(player.energy)
 					energyBlock1.changePos()
 				# Clicked the Attack button
 				elif attackButton.buttonRect.collidepoint(click):
 					if player.energy >= 10:
+						playerShoot.play()
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
 						playerAttack = d6()+4
@@ -303,6 +319,7 @@ def main():
 				# Clicked the Shield button
 				elif shieldButton.buttonRect.collidepoint(click):
 					if player.energy >= 10 and shieldButton.cooldown == False:
+						shieldsUp.play()
 						shieldButton.changeCooldown(True)
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
@@ -348,9 +365,11 @@ def main():
 			if second%3 == 0:
 				enemyAttack = enemy.attack()
 				if player.color == cyan and enemyAttack > 0:
+					playerBlocked.play()
 					print("Shields absorbed damage from the enemy ship!")
 				else:
 					if enemyAttack > 0:
+						enemyShoot.play()
 						print("You were hit for {} damage!".format(enemyAttack))
 						player.changeHull(-enemyAttack)
 						healthScore.modify(player.hull)
