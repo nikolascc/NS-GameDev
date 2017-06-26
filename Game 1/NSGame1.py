@@ -87,7 +87,7 @@ class ActionButton(Button):
 		Button.__init__(self, color, text, left, top, width, height)
 		self.buttonRect = pygame.Rect(self.left, self.top, self.width, self.height)
 		self.backgroundRect = pygame.Rect(self.left-3, self.top-3, self.width+6, self.height+6)
-		self.attackButtonText = Text(self.text, red, self.left+16, self.top+18)
+		self.attackButtonText = Text(self.text, red, self.left+(self.width/2)-75, self.top+(self.height/2)-10, 50)
 		self.cooldown = False
 
 	def render(self):
@@ -130,12 +130,13 @@ class Score:
 
 class Text:
 	# this class creates text objects
-	def __init__(self, content, color, x, y, background=False):
+	def __init__(self, content, color, x, y, size, background=False):
 		self.content = content
 		self.color = color
 		self.x = x
 		self.y = y
-		font = pygame.font.SysFont(None,25)
+		self.size = size
+		font = pygame.font.SysFont(None,self.size)
 		self.text = font.render(self.content, True, self.color)
 		self.background = background
 		if self.background == True:
@@ -177,8 +178,8 @@ def main():
 
 	# initializations
 	clickerScore = Score(0, (SCREEN_WIDTH/1.5)+70, SCREEN_HEIGHT/1.65, True)
-	energyText = Text('Energy: ', green, (SCREEN_WIDTH/1.5), (SCREEN_HEIGHT/1.65), True)
-	healthText = Text('Health: ', green, (SCREEN_WIDTH/2), (SCREEN_HEIGHT/1.65), True)
+	energyText = Text('Energy: ', green, (SCREEN_WIDTH/1.5), (SCREEN_HEIGHT/1.65), 25, True)
+	healthText = Text('Health: ', green, (SCREEN_WIDTH/2), (SCREEN_HEIGHT/1.65), 25, True)
 	blockx = random.randrange((SCREEN_WIDTH/2)+10, SCREEN_WIDTH-30)
 	blocky = random.randrange(10, (SCREEN_HEIGHT/2)+20)
 	energyBlock1 = Energy_Block(otherbit,blockx,blocky)
@@ -188,8 +189,8 @@ def main():
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+65, (SCREEN_HEIGHT/1.65), True)
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
-	attackButton = ActionButton(orange_red, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
-	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	attackButton = ActionButton(orange_red, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 200, 100)
+	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.2125), int(SCREEN_HEIGHT/1.5), 200, 100)
 	renderableObjects = [player, enemy, healthScore, enemyHullPoints, attackButton, shieldButton, clickerScore, energyText, healthText, energyBlock1]
 	time = 0
 	second = 0
