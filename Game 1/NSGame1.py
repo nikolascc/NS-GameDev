@@ -5,7 +5,7 @@ import random
 import math
 
 # initialize screen & colours
-pygame.mixer.pre_init(44100, -16, 1, 512)
+pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
 SCREEN_WIDTH = 1280
@@ -31,18 +31,20 @@ background_img = pygame.image.load('firstscreen.png')
 otherbit = pygame.image.load('otherbit.png')
 metalmesh = pygame.image.load('metalmesh.png')
 
-# mixer and sounds
+# channels and sounds
 sfxChannel = pygame.mixer.Channel(2)
 playerShoot = pygame.mixer.Sound('Laser_Shoot.wav')
 enemyShoot = pygame.mixer.Sound('Enemy_Shoot.wav')
 energyGather = pygame.mixer.Sound('Energy.wav')
 shieldsUp = pygame.mixer.Sound('Shields_Up.wav')
 playerBlocked = pygame.mixer.Sound('Blocked.wav')
+noEnergy = pygame.mixer.Sound('No_Energy.wav')
 playerShoot.set_volume(0.4)
 enemyShoot.set_volume(0.25)
 energyGather.set_volume(0.15)
 shieldsUp.set_volume(0.15)
 playerBlocked.set_volume(0.25)
+noEnergy.set_volume(0.25)
 
 class Player:
 	# this class creates the player object
@@ -316,6 +318,7 @@ def main():
 								i += 1
 							quit()
 					else:
+						noEnergy.play()
 						print("Not enough energy!")
 				# Clicked the Shield button
 				elif shieldButton.buttonRect.collidepoint(click):
@@ -329,8 +332,10 @@ def main():
 						print("Shields raised!")
 					else:
 						if shieldButton.cooldown == True:
+							noEnergy.play()
 							print("Shields cooling down!")
 						else:
+							noEnergy.play()
 							print("Not enough energy!")
 
 		pygame.display.update()
