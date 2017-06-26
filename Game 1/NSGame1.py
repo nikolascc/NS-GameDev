@@ -5,6 +5,8 @@ import random
 import math
 
 # initialize screen & colours
+pygame.mixer.pre_init(44100, -16, 1, 512)
+pygame.mixer.init()
 pygame.init()
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -30,18 +32,17 @@ otherbit = pygame.image.load('otherbit.png')
 metalmesh = pygame.image.load('metalmesh.png')
 
 # mixer and sounds
-pygame.mixer.init()
 sfxChannel = pygame.mixer.Channel(2)
 playerShoot = pygame.mixer.Sound('Laser_Shoot.wav')
 enemyShoot = pygame.mixer.Sound('Enemy_Shoot.wav')
 energyGather = pygame.mixer.Sound('Energy.wav')
 shieldsUp = pygame.mixer.Sound('Shields_Up.wav')
 playerBlocked = pygame.mixer.Sound('Blocked.wav')
-playerShoot.set_volume(0.5)
-enemyShoot.set_volume(0.35)
-energyGather.set_volume(0.25)
-shieldsUp.set_volume(0.25)
-playerBlocked.set_volume(0.35)
+playerShoot.set_volume(0.4)
+enemyShoot.set_volume(0.25)
+energyGather.set_volume(0.15)
+shieldsUp.set_volume(0.15)
+playerBlocked.set_volume(0.25)
 
 class Player:
 	# this class creates the player object
