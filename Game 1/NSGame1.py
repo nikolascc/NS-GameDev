@@ -61,6 +61,14 @@ class Enemy:
 	def changeHull(self, num):
 		self.hull += num
 
+	def attack(self):
+		attack = d20()[0]
+		if attack >= 15:
+			damage = d6()
+			print("You were hit for {} damage!".format(damage))
+			
+			
+
 class TriangleEnemy:
 	def __init__(self, a):
 		self.a = a
@@ -87,13 +95,13 @@ class ActionButton(Button):
 		Button.__init__(self, color, text, left, top, width, height)
 		self.buttonRect = pygame.Rect(self.left, self.top, self.width, self.height)
 		self.backgroundRect = pygame.Rect(self.left-3, self.top-3, self.width+6, self.height+6)
-		self.attackButtonText = Text(self.text, red, self.left+(self.width/2)-75, self.top+(self.height/2)-10, 50)
+		self.actionButtonText = Text(self.text, red, self.left+(self.width/2)-75, self.top+(self.height/2)-15, 50)
 		self.cooldown = False
 
 	def render(self):
 		pygame.draw.rect(gameDisplay, black, self.backgroundRect, 0)
 		pygame.draw.rect(gameDisplay, self.color, self.buttonRect, 0)
-		self.attackButtonText.render()
+		self.actionButtonText.render()
 
 	def changeCooldown(self, flag):
 		self.cooldown = flag
@@ -141,7 +149,7 @@ class Text:
 		self.background = background
 		if self.background == True:
 			self.textRect = pygame.Rect(self.x-3, self.y-3, 71, 23)
-	
+
 	def render(self):
 		if self.background == True:
 			pygame.draw.rect(gameDisplay, white, self.textRect, 0)
@@ -156,13 +164,55 @@ class Energy_Block:
 
 	def render(self):
 		gameDisplay.blit(self.image,(self.x, self.y))
-	
+
 	def changePos(self):
 		self.x = random.randrange((SCREEN_WIDTH/2)+10, SCREEN_WIDTH-40)
 		self.y = random.randrange(10, (SCREEN_HEIGHT/2)+20)
 
 	def position(self):
 		return self.x, self.y
+
+def d20():
+    r3 = 0
+    crit = False
+    near_crit = False
+    crit_fail = False
+    explode = False
+    r1 = random.randint(1,20)
+    if r1 == 1:
+        print("Critical Fail!")
+        crit_fail = True
+    if r1 == 19:
+        print("Near Crit!")
+        near_crit = True
+    while r1 == 20 or explode == True:
+        if crit == False:
+            print("CRIT!!")
+        r3 += r1
+        r1 = random.randint(1,20) - 1
+        if r1 == 19:
+            print("d20 EXPLODE!")
+            explode = True
+        else:
+            explode = False
+        crit = True
+    r3 += r1
+    return r3, near_crit, crit
+
+def d6():
+    r3 = 0
+    explode = False
+    r1 = random.randint(1,6)
+    while r1 == 6 or explode == True:
+        r3 += r1
+        r1 = random.randint(1,6) - 1
+        if r1 == 5:
+            print("d6 EXPLODE!")
+            explode = True
+        else:
+            explode = False
+    r3 += r1
+    return r3
 
 def handle_clicks():
 	print('clicked!')
@@ -263,7 +313,11 @@ def main():
 		if time%60 == 0:
 			second += 1
 			print(second)
+			if second%3 == 0:
+				print("second: " + str(second))
+				enemy.attack()
 			#time = 0
+		
 		clock.tick(60)
 
 # call functions here
