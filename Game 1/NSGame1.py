@@ -15,6 +15,7 @@ blue = (0,0,255)
 cyan = (0, 255, 255)
 firebrick = (178, 38, 34)
 orange_red = (255, 69, 0)
+light_slate_gray = (119, 136, 153)
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('NS Game 1')
 
@@ -85,10 +86,12 @@ class ActionButton(Button):
 	def __init__(self, color, text, left, top, width, height):
 		Button.__init__(self, color, text, left, top, width, height)
 		self.buttonRect = pygame.Rect(self.left, self.top, self.width, self.height)
+		self.backgroundRect = pygame.Rect(self.left-3, self.top-3, self.width+6, self.height+6)
 		self.attackButtonText = Text(self.text, red, self.left+16, self.top+18)
 		self.cooldown = False
 
 	def render(self):
+		pygame.draw.rect(gameDisplay, black, self.backgroundRect, 0)
 		pygame.draw.rect(gameDisplay, self.color, self.buttonRect, 0)
 		self.attackButtonText.render()
 
@@ -113,6 +116,10 @@ class Score:
 		self.score = self.font.render(str(self.number), True, red)
 		if self.background == True:
 			pygame.draw.rect(gameDisplay, white, self.scoreRect, 0)
+			if self.number >= 100:
+				self.scoreRect = pygame.Rect(self.x-3, self.y-3, 35, 23)
+			else:
+				self.scoreRect = pygame.Rect(self.x-3, self.y-3, 23, 23)
 		gameDisplay.blit(self.score,(self.x,self.y))
 
 	def change(self, num):
@@ -178,7 +185,6 @@ def main():
 	energyBlock2 = Energy_Block(otherbit,blockx,blocky)
 	energyBlock3 = Energy_Block(otherbit,blockx,blocky)
 	enemy = Enemy(100)
-	#testEnemy = TriangleEnemy(50)
 	player = Player(100, 0)
 	healthScore = Score(player.hull, (SCREEN_WIDTH/2)+65, (SCREEN_HEIGHT/1.65), True)
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
@@ -235,6 +241,8 @@ def main():
 		gameDisplay.blit(metalmesh,(0, SCREEN_HEIGHT/1.7))
 		gameDisplay.blit(metalmesh,(500, SCREEN_HEIGHT/1.7))
 		gameDisplay.blit(metalmesh,(1000, SCREEN_HEIGHT/1.7))
+		pygame.draw.line(gameDisplay, light_slate_gray, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 16)
+		pygame.draw.line(gameDisplay, light_slate_gray, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 16)
 		pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 10)
 		pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 10)
 		
