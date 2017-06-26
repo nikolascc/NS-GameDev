@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw
 import time
 import random
 import math
@@ -17,7 +18,7 @@ firebrick = (178, 38, 34)
 orange_red = (255, 69, 0)
 light_slate_gray = (119, 136, 153)
 gameDisplay = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-pygame.display.set_caption('NS Game 1')
+pygame.display.set_caption('Starship Clickers')
 
 # set clock & speed
 clock = pygame.time.Clock()
@@ -33,10 +34,10 @@ class Player:
 	def __init__(self, hull, energy):
 		self.hull = hull
 		self.energy = energy
-		self.color = black
+		self.color = light_slate_gray
 
 	def render(self):
-		pygame.draw.circle(gameDisplay, self.color, (int((SCREEN_WIDTH*0.08)),int((SCREEN_HEIGHT*0.42))), 50, 5)
+		pygame.draw.circle(gameDisplay, self.color, (int((SCREEN_WIDTH*0.08)),int((SCREEN_HEIGHT*0.42))), 50, 0)
 
 	def attack(self):
 		print("Player Attacked!")
@@ -58,17 +59,22 @@ class Enemy:
 		#pygame.draw.polygon(gameDisplay, red, )
 		pygame.draw.rect(gameDisplay, red, self.enemyRect, 5)
 
-	def changeHull(self, num):
+	def changeHull(self, num): 
 		self.hull += num
 
 	def attack(self):
-		attack = d20()[0]
-		if attack >= 15:
-			damage = d6()
+		attack = d20()
+		if attack[0] >= 5:
+			if attack[1] == True:
+				damage = d6()+7
+			elif attack[2] == True:
+				damage = d6()+10
+			else:
+				damage = d6()+4
 			print("You were hit for {} damage!".format(damage))
-			
-			
-
+			return damage
+		else:
+			return 0
 class TriangleEnemy:
 	def __init__(self, a):
 		self.a = a
@@ -173,6 +179,7 @@ class Energy_Block:
 		return self.x, self.y
 
 def d20():
+	# This function simulates a twenty-sided dice
     r3 = 0
     crit = False
     near_crit = False
@@ -200,6 +207,7 @@ def d20():
     return r3, near_crit, crit
 
 def d6():
+	# This function simulates a six-sided dice
     r3 = 0
     explode = False
     r1 = random.randint(1,6)
@@ -241,16 +249,24 @@ def main():
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
 	attackButton = ActionButton(orange_red, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 200, 100)
 	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.2125), int(SCREEN_HEIGHT/1.5), 200, 100)
-	renderableObjects = [player, enemy, healthScore, enemyHullPoints, attackButton, shieldButton, clickerScore, energyText, healthText, energyBlock1]
+	renderableObjects = [player, enemy, healthText, healthScore, enemyHullPoints, attackButton, shieldButton, clickerScore, energyText, energyBlock1]
 	time = 0
 	second = 0
 	shieldTime = 0
 	
 	
-	# fill background
+	# backgrounds
 	background = pygame.Surface(gameDisplay.get_size())
 	background = background.convert()
 	background.fill(white)
+	spaceBackground = pygame.Surface((int(SCREEN_WIDTH/2),int(SCREEN_HEIGHT/1.7)))
+	spaceBackground.fill(black)
+	i = 0
+	while i < 50:
+		x = random.randint(0, int(SCREEN_WIDTH/2))
+		y = random.randint(0, int(SCREEN_HEIGHT/1.7))
+		pygame.gfxdraw.pixel(spaceBackground, x, y, white)
+		i += 1
 	
 	##### GAME LOOP #####
 	while 1:
@@ -264,6 +280,7 @@ def main():
 					player.changeEnergy(3)
 					clickerScore.modify(player.energy)
 					energyBlock1.changePos()
+				# Clicked the Attack button
 				elif attackButton.buttonRect.collidepoint(click):
 					if player.energy >= 10:
 						player.changeEnergy(-10)
@@ -273,6 +290,7 @@ def main():
 						print("Attacked enemy!")
 					else:
 						print("Not enough energy!")
+				# Clicked the Shield button
 				elif shieldButton.buttonRect.collidepoint(click):
 					if player.energy >= 10 and shieldButton.cooldown == False:
 						shieldButton.changeCooldown(True)
@@ -289,6 +307,7 @@ def main():
 
 		pygame.display.update()
 		gameDisplay.blit(background,(0,0))
+		gameDisplay.blit(spaceBackground,(0,0))
 		gameDisplay.blit(metalmesh,(0, SCREEN_HEIGHT/1.7))
 		gameDisplay.blit(metalmesh,(500, SCREEN_HEIGHT/1.7))
 		gameDisplay.blit(metalmesh,(1000, SCREEN_HEIGHT/1.7))
@@ -301,11 +320,14 @@ def main():
 		for object in renderableObjects:
 			object.render()
 		
+		# Handles keys (eventually...)
 		handle_keys()
 		
 		# returns the player's shields to normal after 3 seconds
 		if time == shieldTime + 180:
-			player.color = black
+			player.color = light_slate_gray
+		
+		# removes cooldown on player's shields after 6 seconds
 		if time == shieldTime + 360:
 			shieldButton.cooldown = False
 			
@@ -313,10 +335,22 @@ def main():
 		if time%60 == 0:
 			second += 1
 			print(second)
+			# Enemy attacks
 			if second%3 == 0:
-				print("second: " + str(second))
-				enemy.attack()
-			#time = 0
+				enemyAttack = enemy.attack()
+				player.changeHull(-enemyAttack)
+				healthScore.modify(player.hull)
+				if player.hull <= 0:
+					i = 10
+					while i > 0:
+						print("*"*i)
+						i -= 1
+					print("You were destroyed. GAME OVER.")
+					i = 1
+					while i<11:
+						print("*"*i)
+						i += 1
+					quit()
 		
 		clock.tick(60)
 
