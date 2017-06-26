@@ -222,7 +222,6 @@ def d6():
     return r3
 
 def handle_clicks():
-	print('clicked!')
 	clickx, clicky = pygame.mouse.get_pos()
 	return clickx, clicky
 
@@ -284,9 +283,10 @@ def main():
 					if player.energy >= 10:
 						player.changeEnergy(-10)
 						clickerScore.modify(player.energy)
-						enemy.changeHull(-10)
+						playerAttack = d6()+4
+						enemy.changeHull(-playerAttack)
 						enemyHullPoints.modify(enemy.hull)
-						print("Attacked enemy!")
+						print("Attacked enemy for {} damage!".format(playerAttack))
 						if enemy.hull <= 0:
 							i = 10
 							while i > 0:
@@ -344,7 +344,6 @@ def main():
 		time += 1
 		if time%60 == 0:
 			second += 1
-			print(second)
 			# Enemy attacks
 			if second%3 == 0:
 				enemyAttack = enemy.attack()
