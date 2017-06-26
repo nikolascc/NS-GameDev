@@ -184,6 +184,7 @@ def main():
 	enemyHullPoints = Score(enemy.hull, SCREEN_WIDTH/2.75, (SCREEN_HEIGHT/9)-20)
 	attackButton = ActionButton(orange_red, "ATTACK", int(SCREEN_WIDTH*0.0125), int(SCREEN_HEIGHT/1.5), 100, 50)
 	shieldButton = ActionButton(cyan, "SHIELDS", int(SCREEN_WIDTH*0.1125), int(SCREEN_HEIGHT/1.5), 100, 50)
+	renderableObjects = [player, enemy, healthScore, enemyHullPoints, attackButton, shieldButton, clickerScore, energyText, healthText, energyBlock1]
 	time = 0
 	second = 0
 	shieldTime = 0
@@ -223,8 +224,6 @@ def main():
 						player.color = cyan
 						shieldTime = time
 						print("Shields raised!")
-						if shieldButton.cooldown == True:
-							print("Cooldown is True!")
 					else:
 						if shieldButton.cooldown == True:
 							print("Shields cooling down!")
@@ -238,22 +237,17 @@ def main():
 		gameDisplay.blit(metalmesh,(1000, SCREEN_HEIGHT/1.7))
 		pygame.draw.line(gameDisplay, black, (SCREEN_WIDTH/2, 0), (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.7), 10)
 		pygame.draw.line(gameDisplay, black, (0, SCREEN_HEIGHT/1.7), (SCREEN_WIDTH, SCREEN_HEIGHT/1.7), 10)
-		player.render()
-		enemy.render()
-		#testEnemy.render()
-		attackButton.render()
-		shieldButton.render()
+		
+		# Render all objects in renderableObjects list
+		for object in renderableObjects:
+			object.render()
+		
 		handle_keys()
-		clickerScore.render()
-		healthScore.render()
-		enemyHullPoints.render()
-		energyText.render()
-		healthText.render()
-		energyBlock1.render()
 		
 		# returns the player's shields to normal after 3 seconds
 		if time == shieldTime + 180:
 			player.color = black
+		if time == shieldTime + 360:
 			shieldButton.cooldown = False
 			
 		time += 1
