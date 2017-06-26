@@ -64,14 +64,13 @@ class Enemy:
 
 	def attack(self):
 		attack = d20()
-		if attack[0] >= 5:
+		if attack[0] >= 11:
 			if attack[1] == True:
 				damage = d6()+7
 			elif attack[2] == True:
 				damage = d6()+10
 			else:
 				damage = d6()+4
-			print("You were hit for {} damage!".format(damage))
 			return damage
 		else:
 			return 0
@@ -288,6 +287,17 @@ def main():
 						enemy.changeHull(-10)
 						enemyHullPoints.modify(enemy.hull)
 						print("Attacked enemy!")
+						if enemy.hull <= 0:
+							i = 10
+							while i > 0:
+								print("*"*i)
+								i -= 1
+							print("You destroyed the enemy ship! YOU WIN!")
+							i = 1
+							while i<11:
+								print("*"*i)
+								i += 1
+							quit()
 					else:
 						print("Not enough energy!")
 				# Clicked the Shield button
@@ -338,8 +348,13 @@ def main():
 			# Enemy attacks
 			if second%3 == 0:
 				enemyAttack = enemy.attack()
-				player.changeHull(-enemyAttack)
-				healthScore.modify(player.hull)
+				if player.color == cyan and enemyAttack > 0:
+					print("Shields absorbed damage from the enemy ship!")
+				else:
+					if enemyAttack > 0:
+						print("You were hit for {} damage!".format(enemyAttack))
+						player.changeHull(-enemyAttack)
+						healthScore.modify(player.hull)
 				if player.hull <= 0:
 					i = 10
 					while i > 0:
